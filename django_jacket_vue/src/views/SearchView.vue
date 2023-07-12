@@ -52,7 +52,7 @@
                         this.products = response.data;
                     }).catch(error => {
                         toast({
-                            message: 'Somethign went wrong. Please try again',
+                            message: 'Something went wrong. Please try again!',
                             type: 'is-danger',
                             dismissible: true,
                             pauseOnHover: true,
