@@ -25,19 +25,41 @@
                 </div>
             </div>
         </div>
+        
+        <AddReview 
+            :product="product"
+            @review-added="refreshPage"
+        />
+
+        <div class="column is-9 mt-4">
+            <h1 class="title is-4"><b>Other reviews</b></h1>
+            <Review 
+                v-for="review in reviews"
+                :userName="review.user"
+                :rating="review.rating"
+                :text="review.text"
+            />
+        </div>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
 import  { toast } from 'bulma-toast';
+import Review from '@/components/Review.vue';
+import AddReview from '@/components/AddReview.vue';
 
 export default {
     name: 'ProductView',
+    components: {
+        Review,
+        AddReview
+    },
     data() {
         return {
             quantity: 1,
-            product: {}
+            product: {},
+            reviews: [],
         }
     },
     mounted() {
@@ -54,10 +76,30 @@ export default {
                 .then(response => {
                     this.product = response.data;
                     document.title = this.product.name + ' | Djackets'
+                    this.getReviews(this.product.id);
                 })
                 .catch(error => {
                     toast({
-                        message: 'Somethign went wrong. Please try again',
+                        message: 'Something went wrong. Please try again',
+                        type: 'is-danger',
+                        dismissible: true,
+                        pauseOnHover: true,
+                        duration: 2000,
+                        position: 'bottom-right',
+                    })
+                })
+
+            this.$store.commit('setIsLoading', false)
+        },
+        async getReviews(product_id) {
+            await axios
+                .get(`/api/v1/reviews/${product_id}`)
+                .then(response => {
+                    this.reviews = response.data;
+                })
+                .catch(error => {
+                    toast({
+                        message: 'Something went wrong. Please try again',
                         type: 'is-danger',
                         dismissible: true,
                         pauseOnHover: true,
@@ -88,6 +130,10 @@ export default {
                 duration: 2000,
                 position: 'bottom-right',
             })
+        },
+        refreshPage(product_id) {
+            this.$router.back();
+            this.$router.forward();
         }
     }
 }

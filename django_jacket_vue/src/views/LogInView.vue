@@ -82,7 +82,6 @@
                         axios.defaults.headers.common['Authorization'] = "Token " + token
                         localStorage.setItem("token", token)
 
-                        console.log(this.$route.query.to)
                         const toPath = this.$route.query.to || '/cart'
                         this.$router.push(toPath)
                     })
@@ -92,7 +91,6 @@
                                 this.errors.push(`${property}: ${error.response.data[property]}`)
                             }
 
-                            console.log(JSON.stringify(error.response.data))
                         } else if (error.message) {
                             this.errors.push('Something went wrong. Please try again')
                             
